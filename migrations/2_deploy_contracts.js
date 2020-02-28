@@ -1,5 +1,5 @@
-var Auction = artifacts.require("Auction");
+var Auction = artifacts.require("CertiBlocks");
 
 module.exports = function (deployer) {
-  deployer.deploy(Auction);
+  deployer.deploy(CertiBlocks);
 };
