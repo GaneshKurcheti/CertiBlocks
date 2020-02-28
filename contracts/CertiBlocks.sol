@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
 contract CertiBlocks {
+    // Stucture to store the certificate in the blockchain.
     struct Certificate {
         string ipfsHash;
         string sha256Hash;
@@ -10,6 +11,7 @@ contract CertiBlocks {
         string notes;
         uint256 expiryDate;
     }
+    // Mappings are dynamically changing values in the blockchain. 
     mapping(string => address) issuerAuthorityDetails;
     mapping(string => address) issuerDetails;
     mapping(string => address) recipientDetails;
@@ -30,14 +32,15 @@ contract CertiBlocks {
     mapping(string => uint256) certificateExpiryMapper;
     mapping(string => uint) certificateIDMapper;
 
-
+    // Events for storing in the transaction log.
     event RegisteredNewAuthority(address indexed authority, string details);
     event RegisteredNewIssuer(address indexed issuer, string details);
     event RegisteredNewRecipient(address indexed recipient, string details);
     event IssuedNewCertificate(uint indexed certificate, address indexed issuer, address indexed recipient);
 
-
+    // Used to track the index for next block that will be added to the blockchain.
     uint currentIndex;
+
     constructor() public {
         issuerAuthorityDetails["initial"] = msg.sender;
         isIssuingAuthority[msg.sender] = true;
@@ -45,30 +48,34 @@ contract CertiBlocks {
         currentIndex = 1;
     }
 
+    // Adds new authority. On successfull addition of authority RegisteredNewAuthority event is emitted.
     function AddNewIssuerAuthority(address addressOfAuthority,string memory details) public{
         require((isIssuingAuthority[msg.sender] == true), "You are not part of authority to register a new Issuer Authority.");
         issuerAuthorityDetails[details] = addressOfAuthority;
         isIssuingAuthority[addressOfAuthority] = true;
         issuerAuthorityList[addressOfAuthority] = details;
-        emit RegisteredNewAuthority(msg.sender, details);
+        emit RegisteredNewAuthority(addressOfAuthority, details);
     }
 
+    // Adds new issuer. On successfull addition of issuer RegisteredNewIssuer event is emitted.
     function AddNewCertificateIssuer(address addressOfIssuer,string memory details) public{
         require((isIssuingAuthority[msg.sender] == true), "You are not part of authority to register a issuer.");
         issuerDetails[details] = addressOfIssuer;
         isCertificateIssuer[addressOfIssuer] = true;
         issuersList[addressOfIssuer] = details;
-        emit RegisteredNewIssuer(msg.sender, details);
+        emit RegisteredNewIssuer(addressOfIssuer, details);
     }
 
+    // Adds new receiver. On successfull addition of receiver RegisteredNewRecipient event is emitted.
     function AddNewReceiver(address addressOfRecepient,string memory details) public{
         require((isIssuingAuthority[msg.sender] == true || isCertificateIssuer[msg.sender] == true), "You are not part of authority or issuer to register a receiver.");
         recipientDetails[details] = addressOfRecepient;
         isRecipient[addressOfRecepient] = true;
         recipientList[addressOfRecepient] = details;
-        emit RegisteredNewRecipient(msg.sender, details);
+        emit RegisteredNewRecipient(addressOfRecepient, details);
     }
    
+   // Adds new certificate. On successfull addition of certificate IssuedNewCertificate event is emitted.
     function AddNewCertificate(address _recipient,string memory _ipfsHash ,string memory _sha256Value, uint256 _expiryDate, string memory _notes ) public {
         require((isCertificateIssuer[msg.sender] == true), "You are not part of issers to create a new certificte.");
         require((isRecipient[_recipient] == true), "Recipient is not atted to recipient list yet. Please add before issuing certificate.");
@@ -96,21 +103,25 @@ contract CertiBlocks {
         emit IssuedNewCertificate(tempId, msg.sender, _recipient);
     }
 
+    // Gets the details of receiver of the certificate. 
     function getRecipientDetails(string memory _sha256Value) public view returns (address){
         require((isValidCertificate[_sha256Value] == true), "Certificate is not part of the blockchain yet.");
         return certificateAndRecipientMapper[_sha256Value];
     }
     
+    // Gets the details of issuer of the certificate. 
     function getIssuerDetails(string memory _sha256Value) public  view returns (address){
         require((isValidCertificate[_sha256Value] == true), "Certificate is not part of the blockchain yet.");
         return certificateAndIssuerMapper[_sha256Value];
     }
 
+    // Gets the notes of the certificate. 
     function getNotes(string memory _sha256Value) public  view returns (string memory){
         require((isValidCertificate[_sha256Value] == true), "Certificate is not part of the blockchain yet.");
         return certificateAndNotesMapper[_sha256Value];
     }
     
+    // Gets the notes of the certificate. 
     function getExpiry(string memory _sha256Value) public view returns (uint256){
         require((isValidCertificate[_sha256Value] == true), "Certificate is not part of the blockchain yet.");
         return certificateExpiryMapper[_sha256Value];
