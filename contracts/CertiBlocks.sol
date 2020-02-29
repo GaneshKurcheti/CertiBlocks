@@ -142,11 +142,11 @@ contract CertiBlocks {
         return issuerCertificateIDs[msg.sender];
     }
 
-    function getIssuerDetails(address _issuer) public view returns (string memory){
+    function getIssuerNodeDetails(address _issuer) public view returns (string memory){
         require((isCertificateIssuer[_issuer] == true), "Address is not registered as issuer.");
         return issuersList[_issuer];
     }
-    function getRecipientDetails(address _recipient) public view returns (string memory){
+    function getRecipientNodeDetails(address _recipient) public view returns (string memory){
         require((isRecipient[_recipient] == true), "Address is not registered as recepient.");
         return recipientList[_recipient];
     }
