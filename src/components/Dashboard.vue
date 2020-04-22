@@ -19,11 +19,11 @@
     <div>
     <div style="display:flex;margin-top:100px">
     <div style="float:left;text-align:left;margin-left:10px;">
-      <div style="color:#007c56;font-weight:bold;border-bottom:2px solid">Designed and developed by</div>
-      <div style="margin-top:10px">Naga Ganesh Singh Kurcheti</div>
-      <div style="margin-top:5px">Madhuri Latha Allam</div>
-      <div style="margin-top:5px">Yugander Reddy Vadyala</div>
-      <div style="margin-top:5px">Abhiram Reddy Gangasani</div>
+      <div style="color:#007c56;width:215px;font-weight:bold;border-bottom:2px solid">Designed and developed by</div>
+      <div style="margin-top:10px">Naga Ganesh Singh Kurcheti (1997-6921)</div>
+      <div style="margin-top:5px">Madhuree Latha Allam (9468-1443)</div>
+      <div style="margin-top:5px">Yugender Reddy Vadyala (5530-9071)</div>
+      <div style="margin-top:5px">Abhiram Reddy Gangasani (3153-1365)</div>
     </div>
     <div style="margin-left:auto;text-align:right">
       <div style="color:#007c56;font-weight:bold;border-bottom:2px solid;margin-right:10px">Under the guidence of </div>
