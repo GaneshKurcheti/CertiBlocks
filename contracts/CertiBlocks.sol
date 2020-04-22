@@ -1,6 +1,31 @@
 pragma solidity ^0.5.0;
 
+contract MerkleProof {
+    function verify(
+        bytes32[] memory proof, bytes32 root, bytes32 leaf, uint index
+    )
+        public pure returns (bool)
+    {
+        bytes32 hash = leaf;
+
+        for (uint i = 0; i < proof.length; i++) {
+            bytes32 proofElement = proof[i];
+
+            if (index % 2 == 0) {
+                hash = keccak256(abi.encodePacked(hash, proofElement));
+            } else {
+                hash = keccak256(abi.encodePacked(proofElement, hash));
+            }
+
+            index = index / 2;
+        }
+
+        return hash == root;
+    }
+}
+
 contract CertiBlocks {
+    bytes32[] public hashes;
     // Stucture to store the certificate in the blockchain.
     struct Certificate {
         string ipfsHash;
@@ -48,6 +73,32 @@ contract CertiBlocks {
         currentIndex = 1;
     }
 
+    function CalculateMerkle() public{
+        for (uint i = 1; i < currentIndex; i++) {
+            hashes.push(keccak256(abi.encodePacked(certificatesIpfsHash[i])));
+        }
+
+        uint n = currentIndex;
+        uint offset = 0;
+
+        while (n > 0) {
+            for (uint i = 0; i < n - 1; i+=2) {
+                hashes.push(
+                    keccak256(abi.encodePacked(
+                        hashes[offset + i],
+                        hashes[offset + i + 1]
+                    ))
+                );
+            }
+            offset += n;
+            n = n / 2;
+        }
+    }
+
+    function getRoot() public view returns (bytes32) {
+        return hashes[hashes.length - 1];
+    }
+
     // Adds new authority. On successfull addition of authority RegisteredNewAuthority event is emitted.
     function AddNewIssuerAuthority(address addressOfAuthority,string memory details) public{
         require((isIssuingAuthority[msg.sender] == true), "You are not part of authority to register a new Issuer Authority.");
@@ -77,7 +128,7 @@ contract CertiBlocks {
    
    // Adds new certificate. On successfull addition of certificate IssuedNewCertificate event is emitted.
     function AddNewCertificate(address _recipient,string memory _ipfsHash ,string memory _sha256Value, uint256 _expiryDate, string memory _notes ) public {
-        require((isCertificateIssuer[msg.sender] == true), "You are not part of issers to create a new certificte.");
+        require((isCertificateIssuer[msg.sender] == true), "You are not part of issers to create a new certificate.");
         require((isRecipient[_recipient] == true), "Recipient is not atted to recipient list yet. Please add before issuing certificate.");
         require((isValidCertificate[_sha256Value] != true), "Certificate with same hash value is alredy added in the network.");
         Certificate memory certificate;
