@@ -1,5 +1,18 @@
 <h1>CertChain –  Certificates stored and validated in Blockchain</h1>
-
+<h2>Requirements:</h2>
+<ul>
+  <li>Truffle v5.1.22 (core: 5.1.22)
+</li>
+  <li>Solidity v0.5.16 (solc-js)
+</li>
+  <li>Node v12.16.2
+</li>
+  <li>Web3.js v1.2.1</li>
+  <li>Metamask chrome extension</li>
+  <li>Ganache</li>
+  
+  <li>vue ^2.4.2</li>
+</ul>
 <h2>Screenshots:</h2>
 <h3>Dashboard screen</h3>
   
